@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        input, button {
+            margin: 10px;
+        }
+
+        #matrixContainer {
+            margin-top: 20px;
+        }
+
+        .matrixRow {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .matrixInput {
+            width: 40px;
+            text-align: center;
+        }
+
+        #resultContainer {
+            margin-top: 20px;
+        }
+    </style>
+    <title>Gauss-Jordan</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Matriz empelando Gauss-Jordan</h1>
+        <label for="matrixSize">Matrix Size:</label>
+        <input type="number" id="matrixSize" min="2" max="5" step="1" value="3">
+        <button onclick="createMatrix()">Create Matrix</button>
+        <div id="matrixContainer"></div>
+        <button onclick="solve()">Solve</button>
+        <div id="resultContainer"></div>
+    </div>
+    <script>
+        function createMatrix() {
+            const matrixSize = parseInt(document.getElementById('matrixSize').value);
+            const matrixContainer = document.getElementById('matrixContainer');
+
+            let matrixHTML = '';
+
+            for (let i = 0; i < matrixSize; i++) {
+                matrixHTML += '<div class="matrixRow">';
+                for (let j = 0; j < matrixSize; j++) {
+                    matrixHTML += `<input class="matrixInput" type="number" id="element_${i}_${j}" />`;
+                }
+                matrixHTML += '</div>';
+            }
+
+            matrixContainer.innerHTML = matrixHTML;
+        }
+
+            function solve() {
+            const matrixSize = parseInt(document.getElementById('matrixSize').value);
+            const resultContainer = document.getElementById('resultContainer');
+
+            // Get the matrix values from the input fields
+            const matrix = [];
+            for (let i = 0; i < matrixSize; i++) {
+                matrix[i] = [];
+                for (let j = 0; j < matrixSize; j++) {
+                    matrix[i][j] = parseInt(document.getElementById(`element_${i}_${j}`).value);
+                }
+            }
+
+            // Perform Gauss-Jordan elimination
+            for (let i = 0; i < matrixSize; i++) {
+                // Make the diagonal element 1
+                const divisor = matrix[i][i];
+                for (let j = 0; j < matrixSize; j++) {
+                    matrix[i][j] /= divisor;
+                }
+
+                // Make the other elements in the column 0
+                for (let k = 0; k < matrixSize; k++) {
+                    if (k !== i) {
+                        const factor = matrix[k][i];
+                        for (let j = 0; j < matrixSize; j++) {
+                            matrix[k][j] -= factor * matrix[i][j];
+                        }
+                    }
+                }
+            }
+
+            // Display the result
+            let resultHTML = '<h2>Result</h2>';
+            for (let i = 0; i < matrixSize; i++) {
+                resultHTML += '<div class="matrixRow">';
+                for (let j = 0; j < matrixSize; j++) {
+                    resultHTML += `<span class="matrixInput">${parseInt(matrix[i][j])}</span>`;
+                }
+                resultHTML += '</div>';
+            }
+
+            resultContainer.innerHTML = resultHTML;
+        }
+
+    </script>
+</body>
+</html>
